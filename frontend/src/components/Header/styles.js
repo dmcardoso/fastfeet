@@ -2,13 +2,6 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-`;
-
-export const StyledHeader = styled.div`
-    width: 100%;
     height: 64px;
     border-bottom: 1px solid ${({ theme }) => theme.colors.grey_border};
     background-color: #fff;
@@ -19,11 +12,6 @@ export const StyledHeader = styled.div`
         display: flex;
         margin: 0 auto;
         justify-content: space-between;
-
-        nav {
-            padding: 16px 0;
-            display: flex;
-        }
 
         div {
             display: flex;
@@ -47,14 +35,19 @@ export const StyledHeader = styled.div`
     }
 `;
 
-export const Content = styled.div`
-    width: 100%;
-    background-color: ${({ theme }) => theme.colors.grey_app};
-    height: 100%;
+export const NavHeader = styled.nav`
+    padding: 16px 0;
+    display: flex;
 
-    main {
-        width: 1200px;
-        max-width: 100%;
-        margin: 0 auto;
+    > a {
+        padding-right: 30px;
+        border-right: 1px solid ${({ theme }) => theme.colors.grey_border};
+        margin-right: 30px;
+        display: flex;
+        align-items: center;
+
+        img {
+            width: 135px;
+        }
     }
 `;

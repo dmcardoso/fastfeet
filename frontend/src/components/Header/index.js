@@ -1,28 +1,25 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-import PropTypes from 'prop-types';
+import Menu from '../Menu';
+import { Container, NavHeader } from './styles';
+import logo from '~/assets/fastfeet-logo.png';
 
-import { Container, Content, StyledHeader } from './styles';
-
-export default function Header({ children }) {
+export default function Header() {
     return (
         <Container>
-            <StyledHeader>
-                <header>
-                    <nav />
-                    <div>
-                        <strong>Admin FastFeet</strong>
-                        <button type="button">Sair do sistema</button>
-                    </div>
-                </header>
-            </StyledHeader>
-            <Content>
-                <main>{children}</main>
-            </Content>
+            <header>
+                <NavHeader>
+                    <Link to="/">
+                        <img src={logo} alt="FastFeet" />
+                    </Link>
+                    <Menu />
+                </NavHeader>
+                <div>
+                    <strong>Admin FastFeet</strong>
+                    <button type="button">Sair do sistema</button>
+                </div>
+            </header>
         </Container>
     );
 }
-
-Header.propTypes = {
-    children: PropTypes.element.isRequired,
-};
