@@ -1,7 +1,3 @@
-import React from 'react';
+import AsyncSelect from './AsyncSelect';
 
-// import { Container } from './styles';
-
-export default function Select() {
-    return <div />;
-}
+export { AsyncSelect };

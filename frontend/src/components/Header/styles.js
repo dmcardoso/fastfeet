@@ -40,7 +40,7 @@ export const NavHeader = styled.nav`
     display: flex;
 
     > a {
-        padding-right: 30px;
+        padding: 0 30px;
         border-right: 1px solid ${({ theme }) => theme.colors.grey_border};
         margin-right: 30px;
         display: flex;

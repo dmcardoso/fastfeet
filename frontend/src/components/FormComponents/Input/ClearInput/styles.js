@@ -1,9 +1,12 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: ${(props) =>
+        props.styleProps && props.styleProps.width
+            ? props.styleProps.width
+            : '100%'};
     height: auto;
 
     label {
@@ -13,7 +16,6 @@ export const Container = styled.div`
         font-weight: bold;
         line-height: 19px;
         margin-bottom: 9px;
-        text-transform: uppercase;
     }
 
     input {
@@ -28,8 +30,18 @@ export const Container = styled.div`
             border-color: ${({ theme }) => theme.colors.purple_primary};
         }
 
+        &:hover {
+            border-color: ${({ theme }) => theme.colors.grey_input_hover};
+        }
+
         &::placeholder {
             color: ${({ theme }) => theme.colors.grey_placeholder};
         }
+
+        ${(props) =>
+            !!props.styleProps.error &&
+            css`
+                border-color: ${props.theme.colors.red_primary};
+            `}
     }
 `;

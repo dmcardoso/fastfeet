@@ -38,7 +38,9 @@ module.exports = {
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
         'react/jsx-props-no-spreading': 'off',
+        'consistent-return': 'off',
         'no-underscore-dangle': 'off',
+        'react/no-array-index-key': 'off',
         'camelcase': 'off',
         'import-helpers/order-imports': [
             'warn',
