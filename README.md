@@ -7,8 +7,12 @@
 
 ## Install
 
+:warning: This project is android only
+
+
 ```sh
 Check each folder and follow instructions
+
 ```
 
 ## Author
