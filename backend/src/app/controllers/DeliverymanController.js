@@ -6,7 +6,7 @@ import File from '../models/File';
 class DeliverymanController {
     async index(request, response) {
         const { page = 1, q = '' } = request.query;
-        const deliverymans = await Deliveryman.findAll({
+        const deliverymans = await Deliveryman.findAndCountAll({
             where: {
                 deleted_at: null,
                 name: {
@@ -14,8 +14,8 @@ class DeliverymanController {
                 },
             },
             order: ['name'],
-            limit: 20,
-            offset: (page - 1) * 20,
+            limit: 10,
+            offset: (page - 1) * 10,
             include: [
                 {
                     model: File,

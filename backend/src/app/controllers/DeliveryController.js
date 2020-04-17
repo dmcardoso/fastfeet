@@ -8,18 +8,21 @@ import Queue from '../../lib/Queue';
 import DeliveryMail from '../jobs/DeliveryMail';
 import CancelDeliveryMail from '../jobs/CancelDeliveryMail';
 
-class DeliverymanController {
+class DeliveryController {
     async index(request, response) {
         const { page = 1, q = '' } = request.query;
-        const deliveries = await Delivery.findAll({
+        const deliveries = await Delivery.findAndCountAll({
             where: {
                 product: {
                     [Op.substring]: q,
                 },
             },
-            order: ['product'],
-            limit: 20,
-            offset: (page - 1) * 20,
+            order: [
+                ['product', 'asc'],
+                ['id', 'asc'],
+            ],
+            limit: 10,
+            offset: (page - 1) * 10,
             include: [
                 {
                     model: File,
@@ -249,4 +252,4 @@ class DeliverymanController {
     }
 }
 
-export default new DeliverymanController();
+export default new DeliveryController();

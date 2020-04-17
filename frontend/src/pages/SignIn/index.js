@@ -31,7 +31,7 @@ export default function SignIn() {
                     type="password"
                     placeholder="*************"
                 />
-                <Button type="submit">
+                <Button type="submit" margin="15px 0 0 0">
                     {loading ? 'Carregando' : 'Entrar no sistema'}
                 </Button>
             </UnformForm>

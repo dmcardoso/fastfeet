@@ -40,9 +40,13 @@ export default function Delivery() {
 
     async function loadRecipients(search) {
         try {
-            const response = await api.get(`/recipients?q=${search}`);
+            const response = await api.get(`/recipients`, {
+                params: {
+                    q: search,
+                },
+            });
 
-            return response.data.map((recipient) => ({
+            return response.data.rows.map((recipient) => ({
                 label: recipient.name,
                 value: recipient.id,
             }));
@@ -53,9 +57,13 @@ export default function Delivery() {
 
     async function loadDeliverymans(search) {
         try {
-            const response = await api.get(`/deliveryman?q=${search}`);
+            const response = await api.get(`/deliveryman`, {
+                params: {
+                    q: search,
+                },
+            });
 
-            return response.data.map((deliveryman) => ({
+            return response.data.rows.map((deliveryman) => ({
                 label: deliveryman.name,
                 value: deliveryman.id,
             }));

@@ -19,6 +19,5 @@ module.exports = {
         'no-param-reassign': 'off',
         camelcase: 'off',
         'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
-        indent: ['error', 4, { SwitchCase: 1 }],
     },
 };

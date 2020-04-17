@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 import { MdAdd } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
@@ -15,28 +15,40 @@ import api from '~/services/api';
 import formatId from '~/utils/formats/formatId';
 
 export default function Deliverymans() {
+    const tableRef = useRef();
     const history = useHistory();
     const [search, setSearch] = useState('');
 
-    const loadDeliverymans = useCallback(() => {
-        async function getData() {
-            try {
-                const response = await api.get(`deliveryman?q=${search}`);
+    const loadDeliverymans = useCallback(
+        ({ page }) => {
+            async function getData() {
+                try {
+                    const response = await api.get(`deliveryman`, {
+                        params: {
+                            q: search,
+                            page,
+                        },
+                    });
 
-                return response.data;
-            } catch (e) {
-                toast.error('Ocorreu um erro inesperado');
-                return [];
+                    return {
+                        total: response.data.count,
+                        data: response.data.rows,
+                    };
+                } catch (e) {
+                    toast.error('Ocorreu um erro inesperado');
+                    return [];
+                }
             }
-        }
 
-        return getData();
-    }, [search]);
+            return getData();
+        },
+        [search]
+    );
 
     async function deleteDeliveryman(id) {
         await api.delete(`deliveryman/${id}`);
 
-        window.location.reload();
+        tableRef.current.fetchData();
     }
 
     return (
@@ -52,6 +64,7 @@ export default function Deliverymans() {
                 </LinkButton>
             </Box>
             <Table
+                ref={tableRef}
                 columns={[
                     {
                         name: 'ID',

@@ -17,7 +17,7 @@ export default function Problems({ navigation, route }) {
                     `delivery/${deliveryId}/problems`,
                 );
 
-                setProblems(response.data);
+                setProblems(response.data.rows);
             } catch (e) {
                 Alert.alert(
                     'Erro ao listar problemas da entrega',

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 import { MdAdd } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
@@ -13,33 +13,42 @@ import api from '~/services/api';
 import formatId from '~/utils/formats/formatId';
 
 export default function Recipients() {
+    const tableRef = useRef();
     const history = useHistory();
     const [search, setSearch] = useState('');
 
-    const loadRecipients = useCallback(() => {
-        async function getData() {
-            try {
-                const response = await api.get(`recipients?q=${search}`);
+    const loadRecipients = useCallback(
+        ({ page }) => {
+            async function getData() {
+                try {
+                    const response = await api.get(`recipients`, {
+                        params: {
+                            q: search,
+                            page,
+                        },
+                    });
 
-                const recipients = response.data.map((recipient) => ({
-                    ...recipient,
-                    full_address: `${recipient.street}, ${recipient.number}, ${recipient.city} - ${recipient.state}`,
-                }));
+                    const recipients = response.data.rows.map((recipient) => ({
+                        ...recipient,
+                        full_address: `${recipient.street}, ${recipient.number}, ${recipient.city} - ${recipient.state}`,
+                    }));
 
-                return recipients;
-            } catch (e) {
-                toast.error('Ocorreu um erro inesperado');
-                return [];
+                    return { total: response.data.count, data: recipients };
+                } catch (e) {
+                    toast.error('Ocorreu um erro inesperado');
+                    return [];
+                }
             }
-        }
 
-        return getData();
-    }, [search]);
+            return getData();
+        },
+        [search]
+    );
 
     async function deleteRecipient(id) {
         await api.delete(`recipients/${id}`);
 
-        window.location.reload();
+        tableRef.current.fetchData();
     }
 
     return (
@@ -55,6 +64,7 @@ export default function Recipients() {
                 </LinkButton>
             </Box>
             <Table
+                ref={tableRef}
                 columns={[
                     {
                         name: 'ID',

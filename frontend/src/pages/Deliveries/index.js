@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 import { MdAdd } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import Info from './Info';
-import { DeliverymanColumn } from './styles';
+import { DeliverymanColumn, InputFilters, ButtonFilter } from './styles';
 import Avatar from '~/components/Avatar';
 import Box from '~/components/Box';
 import { LinkButton } from '~/components/Button';
@@ -17,48 +17,61 @@ import api from '~/services/api';
 import formatId from '~/utils/formats/formatId';
 
 export default function Deliveries() {
+    const tableRef = useRef();
     const history = useHistory();
     const [modalInfoOpen, setModalInfoOpen] = useState(false);
+    const [filterActive, setFilterActive] = useState(false);
     const [openDelivery, setOpenDelivery] = useState(null);
     const [search, setSearch] = useState('');
 
-    const loadDeliveries = useCallback(() => {
-        async function getData() {
-            try {
-                const response = await api.get(`delivery?q=${search}`);
+    const loadDeliveries = useCallback(
+        ({ page }) => {
+            async function getData() {
+                try {
+                    const apiUrl = filterActive
+                        ? 'delivery/problems'
+                        : 'delivery';
+                    const response = await api.get(apiUrl, {
+                        params: {
+                            q: search,
+                            page,
+                        },
+                    });
 
-                const deliveries = response.data.map((delivery) => {
-                    let status = 'pending';
+                    const deliveries = response.data.rows.map((delivery) => {
+                        let status = 'pending';
 
-                    if (delivery.start_date) {
-                        status = 'withdrawled';
-                    }
+                        if (delivery.start_date) {
+                            status = 'withdrawled';
+                        }
 
-                    if (delivery.end_date) {
-                        status = 'delivered';
-                    }
+                        if (delivery.end_date) {
+                            status = 'delivered';
+                        }
 
-                    if (delivery.canceled_at) {
-                        status = 'canceled';
-                    }
+                        if (delivery.canceled_at) {
+                            status = 'canceled';
+                        }
 
-                    return { ...delivery, status };
-                });
+                        return { ...delivery, status };
+                    });
 
-                return deliveries;
-            } catch (e) {
-                toast.error('Ocorreu um erro inesperado');
-                return [];
+                    return { total: response.data.count, data: deliveries };
+                } catch (e) {
+                    toast.error('Ocorreu um erro inesperado');
+                    return [];
+                }
             }
-        }
 
-        return getData();
-    }, [search]);
+            return getData();
+        },
+        [search, filterActive]
+    );
 
     async function deleteDelivery(id) {
         await api.delete(`delivery/${id}`);
 
-        window.location.reload();
+        tableRef.current.fetchData();
     }
 
     return (
@@ -75,16 +88,25 @@ export default function Deliveries() {
             )}
             <ListPage title="Gerenciando encomendas">
                 <Box justifyContent="space-between" margin="35px 0 5px 0">
-                    <IconInput
-                        name="search"
-                        placeholder="Buscar por encomendas"
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                    <InputFilters>
+                        <IconInput
+                            name="search"
+                            placeholder="Buscar por encomendas"
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <ButtonFilter
+                            active={filterActive}
+                            onClick={() => setFilterActive(!filterActive)}
+                        >
+                            Entregas com problema
+                        </ButtonFilter>
+                    </InputFilters>
                     <LinkButton to="/deliveries/new" icon={MdAdd}>
                         CADASTRAR
                     </LinkButton>
                 </Box>
                 <Table
+                    ref={tableRef}
                     columns={[
                         {
                             name: 'ID',

@@ -1,37 +1,52 @@
-import React, { useState, useEffect, useMemo } from 'react';
+/* eslint-disable react/prop-types */
+import React, {
+    useState,
+    useEffect,
+    useMemo,
+    useImperativeHandle,
+    forwardRef,
+} from 'react';
 
 import get from 'get-value';
-import PropTypes from 'prop-types';
 
 import Actions from './Actions';
+import Pagination from './Pagination';
 import { Container, StyledTable } from './styles';
 
-export default function Table({
-    data,
-    columns,
-    actions,
-    loadData,
-    customActions,
-}) {
+function Table({ data, columns, actions, loadData, customActions }, ref) {
     const [tableState, setTableState] = useState({
-        page: 0,
+        page: 1,
         pages: 0,
-        showPagination: false,
         data: [],
     });
 
-    useEffect(() => {
-        async function setTableData() {
-            const dataResponse = await loadData({
-                page: tableState.page,
-                pages: tableState.pages,
-            });
-            setTableState({ ...tableState, data: dataResponse });
-        }
+    async function setTableData() {
+        const dataResponse = await loadData({
+            page: tableState.page,
+            pages: tableState.pages,
+        });
 
+        const { data: nextData, total } = dataResponse;
+
+        const nextPages = Math.ceil(total / 10);
+
+        setTableState({
+            ...tableState,
+            data: nextData,
+            pages: nextPages,
+        });
+    }
+
+    useImperativeHandle(ref, () => ({
+        fetchData() {
+            setTableData();
+        },
+    }));
+
+    useEffect(() => {
         if (loadData) setTableData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tableState.page, tableState.pages, loadData]);
+    }, [tableState.page, loadData]);
 
     const tableColumns = useMemo(() => {
         return [...columns, { name: 'Ações', accessor: 'tb-actions' }];
@@ -105,40 +120,51 @@ export default function Table({
                     })}
                 </tbody>
             </StyledTable>
+            {tableState.pages > 1 && (
+                <Pagination
+                    setPage={(nextPage) =>
+                        setTableState({ ...tableState, page: nextPage })
+                    }
+                    page={tableState.page}
+                    pages={tableState.pages}
+                />
+            )}
         </Container>
     );
 }
 
-Table.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object),
-    columns: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            accessor: PropTypes.string.isRequired,
-            Cell: PropTypes.func,
-        })
-    ),
-    actions: PropTypes.shape({
-        onDelete: PropTypes.func,
-        onView: PropTypes.func,
-        onEdit: PropTypes.func,
-    }),
-    loadData: PropTypes.func,
-    customActions: PropTypes.arrayOf(
-        PropTypes.shape({
-            call: PropTypes.func.isRequired,
-            icon: PropTypes.oneOfType([PropTypes.element, PropTypes.func])
-                .isRequired,
-            iconColor: PropTypes.string,
-            text: PropTypes.string.isRequired,
-        })
-    ),
-};
+// Table.propTypes = {
+//     data: PropTypes.arrayOf(PropTypes.object),
+//     columns: PropTypes.arrayOf(
+//         PropTypes.shape({
+//             name: PropTypes.string.isRequired,
+//             accessor: PropTypes.string.isRequired,
+//             Cell: PropTypes.func,
+//         })
+//     ),
+//     actions: PropTypes.shape({
+//         onDelete: PropTypes.func,
+//         onView: PropTypes.func,
+//         onEdit: PropTypes.func,
+//     }),
+//     loadData: PropTypes.func,
+//     customActions: PropTypes.arrayOf(
+//         PropTypes.shape({
+//             call: PropTypes.func.isRequired,
+//             icon: PropTypes.oneOfType([PropTypes.element, PropTypes.func])
+//                 .isRequired,
+//             iconColor: PropTypes.string,
+//             text: PropTypes.string.isRequired,
+//         })
+//     ),
+// };
 
-Table.defaultProps = {
-    data: [],
-    columns: [],
-    customActions: [],
-    actions: {},
-    loadData: null,
-};
+// Table.defaultProps = {
+//     data: [],
+//     columns: [],
+//     customActions: [],
+//     actions: {},
+//     loadData: null,
+// };
+
+export default forwardRef(Table);

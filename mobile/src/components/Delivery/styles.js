@@ -1,8 +1,6 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View.attrs({ elevation: 2 })`
-    flex: 1;
-    height: 179px;
     margin-bottom: 30px;
     border-radius: 4px;
     background: white;

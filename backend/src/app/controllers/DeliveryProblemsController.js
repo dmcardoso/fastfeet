@@ -6,10 +6,10 @@ class DeliveryProblemsController {
     async index(request, response) {
         const { page = 1 } = request.query;
         const { deliveryId } = request.params;
-        const deliveries = await DeliveryProblem.findAll({
+        const deliveries = await DeliveryProblem.findAndCountAll({
             where: { delivery_id: deliveryId },
-            limit: 20,
-            offset: (page - 1) * 20,
+            limit: 10,
+            offset: (page - 1) * 10,
             include: [
                 {
                     model: Delivery,

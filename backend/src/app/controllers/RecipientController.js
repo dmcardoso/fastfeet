@@ -5,10 +5,10 @@ import Recipient from '../models/Recipient';
 class RecipientController {
     async index(request, response) {
         const { page = 1, q = '' } = request.query;
-        const recipients = await Recipient.findAll({
+        const recipients = await Recipient.findAndCountAll({
             order: ['name'],
-            limit: 20,
-            offset: (page - 1) * 20,
+            limit: 10,
+            offset: (page - 1) * 10,
             where: {
                 deleted_at: null,
                 name: {

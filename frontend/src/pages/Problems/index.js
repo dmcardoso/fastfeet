@@ -13,11 +13,15 @@ export default function Problems() {
     const [modalInfoOpen, setModalInfoOpen] = useState(false);
     const [openProblem, setOpenProblem] = useState(null);
 
-    async function loadDeliveriesProblems() {
+    async function loadDeliveriesProblems({ page }) {
         try {
-            const response = await api.get('/problems');
+            const response = await api.get('/problems', {
+                params: {
+                    page,
+                },
+            });
 
-            return response.data;
+            return { total: response.data.count, data: response.data.rows };
         } catch (e) {
             toast.error('Ocorreu um erro inesperado');
             return [];

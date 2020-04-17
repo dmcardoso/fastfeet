@@ -18,12 +18,15 @@ export default function Actions({ line, options, customActions }) {
 
     useLayoutEffect(() => {
         const rect = menuRef.current.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
+        if (
+            isOpen &&
+            (rect.width !== menuRect.width || rect.height !== menuRect.height)
+        ) {
             const { width, height } = rect;
             setMenuRect({ width, height });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [menuRef, menuRef.current]);
+    }, [isOpen]);
 
     const { onView, onEdit, onDelete } = options;
 

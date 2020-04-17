@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import ContainerInput from '~/components/FormComponents/ContainerInput';
 import FormPage from '~/components/FormPage';
 import Input from '~/components/UnformComponents/Input';
+import InputMask from '~/components/UnformComponents/InputMask';
 import api from '~/services/api';
 
 export default function Recipient() {
@@ -153,7 +154,12 @@ export default function Recipient() {
                         />
                     </ContainerInput>
                     <ContainerInput>
-                        <Input name="cep" label="CEP" placeholder="CEP" />
+                        <InputMask
+                            name="cep"
+                            mask="99.999-999"
+                            label="CEP"
+                            placeholder="CEP"
+                        />
                     </ContainerInput>
                 </ContainerInput>
             </ContainerInput>
